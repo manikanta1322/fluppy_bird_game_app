@@ -1,32 +1,74 @@
-import 'dart:async';
+// import 'dart:async';
 
+// import 'package:flame/flame.dart';
+// import 'package:flame/game.dart';
+// import 'package:flappy_bird_game/game/flappy_bird_game.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// // import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'screens/game_over_screen.dart';
+
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   // MobileAds.instance.initialize();
+//   SystemChrome.setSystemUIOverlayStyle(
+//       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+//   WidgetsFlutterBinding.ensureInitialized();
+//   // unawaited(MobileAds.instance.initialize());
+
+//   await Flame.device.fullScreen();
+
+//   final game = FlappyBirdGame();
+//   runApp(
+//     GameWidget(
+//       game: game,
+//       // initialActiveOverlays: const [MainMenuScreen.id],
+//       overlayBuilderMap: {
+        // 'mainMenu': (context, _) => MainMenuScreen(game: game),
+//         'gameOver': (context, _) => GameOverScreen(game: game),
+//       },
+//     ),
+//   );
+// }
+
+
+import 'dart:async';
 import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
-import 'package:flappy_bird_game/game/flappy_bird_game.dart';
+import 'package:flappy_bird_game/components/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'screens/game_over_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // MobileAds.instance.initialize();
+
+  // Lock the screen orientation to portrait mode
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // Set the status bar to be transparent
   SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  WidgetsFlutterBinding.ensureInitialized();
-  // unawaited(MobileAds.instance.initialize());
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+  );
 
   await Flame.device.fullScreen();
 
-  final game = FlappyBirdGame();
-  runApp(
-    GameWidget(
-      game: game,
-      // initialActiveOverlays: const [MainMenuScreen.id],
-      overlayBuilderMap: {
-        // 'mainMenu': (context, _) => MainMenuScreen(game: game),
-        'gameOver': (context, _) => GameOverScreen(game: game),
-      },
-    ),
-  );
+  runApp(const MyApp());
 }
+
+
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    );
+  }
+}
+
+
