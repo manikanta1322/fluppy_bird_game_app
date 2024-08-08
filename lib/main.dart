@@ -24,22 +24,23 @@
 //       game: game,
 //       // initialActiveOverlays: const [MainMenuScreen.id],
 //       overlayBuilderMap: {
-        // 'mainMenu': (context, _) => MainMenuScreen(game: game),
+// 'mainMenu': (context, _) => MainMenuScreen(game: game),
 //         'gameOver': (context, _) => GameOverScreen(game: game),
 //       },
 //     ),
 //   );
 // }
 
-
 import 'dart:async';
 import 'package:flame/flame.dart';
 import 'package:flappy_bird_game/components/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
 
   // Lock the screen orientation to portrait mode
   await SystemChrome.setPreferredOrientations([
@@ -57,18 +58,21 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-
-
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+ 
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
   }
 }
-
-

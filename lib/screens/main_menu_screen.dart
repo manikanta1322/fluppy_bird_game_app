@@ -1,7 +1,7 @@
 import 'package:flappy_bird_game/game/assets.dart';
 import 'package:flappy_bird_game/game/flappy_bird_game.dart';
 import 'package:flutter/material.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class MainMenuScreen extends StatefulWidget {
   final FlappyBirdGame game;
@@ -17,13 +17,41 @@ class MainMenuScreen extends StatefulWidget {
 }
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
 
-  // BannerAd bAd = new BannerAd(size: AdSize.banner, adUnitId: 'ca-app-pub-2792610804820532/8204852446', listener: 
-  // BannerAdListener(
-  //  onAdLoaded: (Ad ad){
-  //   print('Add loaded');
-  //  }
-  // ), request: request)
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-2792610804820532/8204852446',
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+          print("Ad Loaded");
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          ad.dispose();
+          print("Ad failed to load: ${error.code} - ${error.message}");
+        },
+        onAdOpened: (Ad ad) {
+          print("Ad opened");
+        },
+      ),
+      request: AdRequest(),
+    );
+    _bannerAd.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.game.pauseEngine();
@@ -34,16 +62,35 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           widget.game.overlays.remove('mainMenu');
           widget.game.resumeEngine();
         },
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(Assets.menu),
-              fit: BoxFit.cover,
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(Assets.menu),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(Assets.message),
+                  // Other widgets can be added here
+                ],
+              ),
             ),
-          ),
-          child: Image.asset(Assets.message),
+            if (_isAdLoaded)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: _bannerAd.size.width.toDouble(),
+                  height: _bannerAd.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd),
+                ),
+              ),
+          ],
         ),
       ),
     );
